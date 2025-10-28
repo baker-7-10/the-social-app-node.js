@@ -18,12 +18,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 const ProductRouters = require('./routers/porduct'); 
 const authRouters = require('./routers/auth'); 
+const postRouters = require('./routers/post'); 
 
-  app.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Hello, mongoose!');
 });
-    app.use('/api',ProductRouters );
-    app.use('/auth',authRouters );
+app.use('/api',ProductRouters );
+app.use('/auth',authRouters );
+app.use('/posts',postRouters );
   
 // DB Connection
 mongoose.connect(process.env.MONGO_URI)
