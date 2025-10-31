@@ -21,7 +21,7 @@ const authRouters = require('./routers/auth');
 const postRouters = require('./routers/post'); 
 
 app.get('/', (req, res) => {
-  res.send('Hello, mongoose!');
+  res.send('Hello, home page!');
 });
 app.use('/api',ProductRouters );
 app.use('/auth',authRouters );

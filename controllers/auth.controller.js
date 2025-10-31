@@ -93,51 +93,49 @@ exports.verifyEmail = async (req, res) => {
 
 // =================== 🔑 LOGIN ===================
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  let loadedUser;
+  try {
+    const { email, password } = req.body;
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        return res.status(401).json({ message: "Invalid email or password"  });
-      }
+    const user = await User.findOne({ email: email });
 
-      // 🚫 Prevent login if email is not verified
-      if (!user.isVerified) {
-        return res.status(403).json({ message: "Please verify your email before logging in." });
-      }
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-      loadedUser = user;
-      return bcrypt.compare(password, user.password);
-    })
-    .then((isEqual) => {
-      if (!isEqual) {
-        return res.status(401).json({ message: "Invalid email or password" });
-      }
+    // 🚫 Prevent login if email is not verified
+    if (!user.isVerified) {
+      return res.status(403).json({ message: "Please verify your email before logging in." });
+    }
 
-      // ✅ Generate JWT upon login
-      const token = jwt.sign(
-        {
-          userId: loadedUser._id.toString(),
-          email: loadedUser.email,
-        },
-        SECRET_KEY,
-        { expiresIn: "1h" }
-      );
+    const isEqual = await bcrypt.compare(password, user.password);
+    if (!isEqual) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-      res.status(200).json({
-        message: "Logged in successfully",
-        token: token,
-        userId: loadedUser._id.toString(),
-        avatar:loadedUser.avatar,
-        name: loadedUser.name,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ message: "Server error" });
+    // ✅ Generate JWT upon login
+    const token = jwt.sign(
+      {
+        userId: user._id.toString(),
+        email: user.email,
+      },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    return res.status(200).json({
+      message: "Logged in successfully",
+      token: token,
+      userId: user._id.toString(),
+      avatar: user.avatar,
+      name: user.name,
     });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
+
 
 // =================== 🔄 FORGOT PASSWORD ===================
 exports.forgotPassword = async (req, res) => {

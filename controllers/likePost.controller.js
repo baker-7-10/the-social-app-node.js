@@ -1,43 +1,5 @@
-const { validationResult } = require("express-validator");
-const Post = require("../models/post.models");
+const Like = require("../models/like.model"); // موديول اللايك إذا كان في ملف منفصل
 
-// ✅ إنشاء بوست جديد
-exports.createPost = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty())
-    return res.status(422).json({ errors: errors.array() });
-
-  const { content, image, video, userId } = req.body;
-
-  try {
-    const post = new Post({
-      user: userId,
-      content,
-      image,
-      video,
-    });
-
-    await post.save();
-    res.status(201).json({ message: "✅ Post created successfully", post });
-  } catch (err) {
-    console.error("Error creating post:", err);
-    res.status(500).json({ message: "❌ Server error while creating post" });
-  }
-};
-
-// ✅ عرض جميع البوستات
-exports.viewPost = async (req, res) => {
-  try {
-    const posts = await Post.find()
-      .populate("user", "name email")
-      .populate("comments.user", "name email");
-
-    res.status(200).json(posts);
-  } catch (err) {
-    console.error("Error fetching posts:", err);
-    res.status(500).json({ message: "❌ Server error while fetching posts" });
-  }
-};
 
 // ✅ عمل إعجاب على بوست
 exports.likePost = async (req, res) => {
