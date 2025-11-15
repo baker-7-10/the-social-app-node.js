@@ -1,23 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const { body } = require("express-validator");
+
 const {
   createPost,
   viewPost,
+  viewPostById,
+  deletePost,
+  updatePost,
 } = require("../controllers/post.controller");
 
-router.post(
-  "/",
-  [
-    body("content").optional().isString(),
-    body("image").optional().isString(),
-    body("video").optional().isString(),
-    body("userId").notEmpty().withMessage("User ID is required"),
-  ],
-  createPost
-);
+const {
+  createPostValidation,
+  updatePostValidation,
+} = require("../middlewares/postValidation");
+
+router.post("/", createPostValidation, createPost);
 
 router.get("/", viewPost);
 
+router.get("/:id", viewPostById);
+
+router.delete("/:id", deletePost);
+
+router.put("/:id", updatePostValidation, updatePost);
 
 module.exports = router;

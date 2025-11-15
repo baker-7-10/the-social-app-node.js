@@ -39,49 +39,63 @@ exports.viewPost = async (req, res) => {
   }
 };
 
-// ✅ عمل إعجاب على بوست
-exports.likePost = async (req, res) => {
-  try {
-    const { userId, postId } = req.body;
 
-    // تحقق إذا المستخدم عمل لايك قبل كذا
-    const existing = await Like.findOne({ user: userId, post: postId });
-    if (existing)
-      return res.status(400).json({ message: "❌ You already liked this post" });
-
-    const like = new Like({ user: userId, post: postId });
-    await like.save();
-    res.status(201).json({ message: "❤️ Post liked successfully", like });
-  } catch (err) {
-    console.error("Error liking post:", err);
-    res.status(500).json({ message: "❌ Server error while liking post" });
-  }
-};
-
-// ✅ إلغاء الإعجاب
-exports.unlikePost = async (req, res) => {
-  try {
-    const { userId, postId } = req.body;
-
-    const removed = await Like.findOneAndDelete({ user: userId, post: postId });
-    if (!removed)
-      return res.status(404).json({ message: "❌ Like not found for this post" });
-
-    res.status(200).json({ message: "💔 Like removed successfully" });
-  } catch (err) {
-    console.error("Error unliking post:", err);
-    res.status(500).json({ message: "❌ Server error while unliking post" });
-  }
-};
-
-// ✅ عدد الإعجابات
-exports.getLikesCount = async (req, res) => {
+exports.viewPostById = async (req, res) => {
   try {
     const postId = req.params.id;
-    const count = await Like.countDocuments({ post: postId });
-    res.status(200).json({ likesCount: count });
+    const post = await Post.findById(postId)
+      .populate("user", "name email")
+      .populate("comments.user", "name email");   
+    if (!post) {
+      return res.status(404).json({ message: "❌ Post not found" });
+    } 
+    res.status(200).json(post);
   } catch (err) {
-    console.error("Error getting likes count:", err);
-    res.status(500).json({ message: "❌ Server error while counting likes" });
+    console.error("Error fetching post by ID:", err);
+    res.status(500).json({ message: "❌ Server error while fetching post" });
   }
 };
+
+// ✅ حذف بوست
+exports.deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const deleted = await Post.findByIdAndDelete(postId);
+    if (!deleted) {
+      return res.status(404).json({ message: "❌ Post not found" });
+    } 
+    res.status(200).json({ message: "🗑️ Post deleted successfully" })
+    } catch (err) {
+      console.error("Error deleting post:", err)
+        res.status(500).json({ message: "❌ Server error while deleting post" });
+    }
+
+};
+
+
+// ✅ تحديث بوست
+exports.updatePost = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(422).json({ errors: errors.array() });
+  try {
+    const postId = req.params.id;
+    const { content, image, video } = req.body;
+    const updated = await Post.findByIdAndUpdate(
+      postId,
+      { content, image, video },
+      { new: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ message: "❌ Post not found" });
+    }
+    res.status(200).json({ message: "✏️ Post updated successfully", updated });
+  } catch (err) {
+    console.error("Error updating post:", err);
+    res.status(500).json({ message: "❌ Server error while updating post" });
+  }
+
+};
+
+
+

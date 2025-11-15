@@ -1,14 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const {
-  viewPost,
   likePost,
   unlikePost,
   getLikesCount,
-} = require("../controllers/post.controller");
+} = require("../controllers/likePost.controller");
 
 
-router.get("/", viewPost);
 
 router.post("/like", likePost);
 
