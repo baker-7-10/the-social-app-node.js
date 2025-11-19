@@ -35,7 +35,7 @@ exports.viewPost = async (req, res) => {
     res.status(200).json(posts);
   } catch (err) {
     console.error("Error fetching posts:", err);
-    res.status(500).json({ message: "❌ Server error while fetching posts" });
+    res.status(500).json({ message: "❌ Server error while fetching posts " +err });
   }
 };
 

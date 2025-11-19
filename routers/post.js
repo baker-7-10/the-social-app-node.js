@@ -13,8 +13,9 @@ const {
   createPostValidation,
   updatePostValidation,
 } = require("../middlewares/postValidation");
+const verifyEmailToken = require("../middlewares/verifyEmailToken");
 
-router.post("/", createPostValidation, createPost);
+router.post("/",verifyEmailToken, createPostValidation, createPost);
 
 router.get("/", viewPost);
 
