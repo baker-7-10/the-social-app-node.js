@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
+
 
 const authRoutes = require('./routers/auth');
 const postRoutes = require('./routers/post');
@@ -22,5 +24,15 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err); 
+
+  res.status(err.statusCode || 400).json({
+    status: "fail",
+    message: err.message || "Internal server error"
+  });
+});
+
 
 module.exports = app;

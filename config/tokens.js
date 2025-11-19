@@ -1,9 +1,15 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 
 const accessSecret = process.env.JWT_ACCESS;
 const refreshSecret = process.env.JWT_REFRESH;
 const verifySecret = process.env.JWT_VERIFY;
 const resetSecret = process.env.JWT_RESET;
+console.log("VERIFY TOKEN:", process.env.JWT_VERIFY);
+console.log(accessSecret , refreshSecret , verifySecret ,resetSecret  );
+
+
 
 module.exports = {
   signAccessToken(payload) {

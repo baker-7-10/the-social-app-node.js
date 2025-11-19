@@ -2,7 +2,7 @@ const transporter = require("../config/email");
 
 module.exports = {
   async sendVerificationEmail(email, name, token) {
-    const url = `${process.env.FRONTEND_URL}/verify?token=${token}`;
+  const url = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
 
     await transporter.sendMail({
       to: email,
@@ -12,7 +12,7 @@ module.exports = {
   },
 
   async sendResetEmail(email, token) {
-    const url = `${process.env.FRONTEND_URL}/reset?token=${token}`;
+    const url = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
 
     await transporter.sendMail({
       to: email,

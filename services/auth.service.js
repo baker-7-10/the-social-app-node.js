@@ -5,7 +5,17 @@ const emailService = require("./email.service");
 FRONTEND_URL = process.env.FRONTEND_URL;
 
 module.exports = {
+  // ================= SIGNUP =================
   async signup({ name, email, password }) {
+
+    // Check duplicate email BEFORE create
+    const exists = await User.findOne({ email });
+    if (exists) {
+      const err = new Error("Email already exists");
+      err.statusCode = 400;
+      throw err;
+    }
+
     const hashed = await bcrypt.hash(password, 12);
 
     const user = await User.create({
@@ -22,14 +32,28 @@ module.exports = {
     return user;
   },
 
+  // ================= LOGIN =================
   async login({ email, password }) {
     const user = await User.findOne({ email });
 
-    if (!user) throw new Error("Invalid email or password");
-    if (!user.isVerified) throw new Error("Email not verified");
+    if (!user) {
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
+    }
+
+    if (!user.isVerified) {
+      const err = new Error("Email not verified");
+      err.statusCode = 403;
+      throw err;
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new Error("Invalid email or password");
+    if (!match) {
+      const err = new Error("Invalid email or password");
+      err.statusCode = 401;
+      throw err;
+    }
 
     const accessToken = tokens.signAccessToken({ userId: user._id });
     const refreshToken = tokens.signRefreshToken({ userId: user._id });
@@ -37,29 +61,61 @@ module.exports = {
     return { user, accessToken, refreshToken };
   },
 
+  // ================= VERIFY EMAIL =================
   async verifyEmail(token) {
-    const decoded = tokens.verify(token, "verify");
-    const user = await User.findById(decoded.userId);
+  const decoded = tokens.verify(token, "verify");
+  const user = await User.findById(decoded.userId);
 
-    if (!user) throw new Error("User not found");
+  if (!user) {
+    const err = new Error("User not found");
+    err.statusCode = 404;
+    throw err;
+  }
 
-    user.isVerified = true;
-    await user.save();
-  },
+  const EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 ساعة
+  if (!user.isVerified && (new Date() - user.createdAt) > EXPIRATION_MS) {
+    await User.findByIdAndDelete(user._id);
+    const err = new Error("Verification expired. Account deleted.");
+    err.statusCode = 410; // Gone
+    throw err;
+  }
 
+  if (user.isVerified) {
+    const err = new Error("Account already verified");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  user.isVerified = true;
+  await user.save();
+},
+
+
+  // ================= FORGOT PASSWORD =================
   async forgotPassword(email) {
     const user = await User.findOne({ email });
-    if (!user) throw new Error("Email not found");
+
+    if (!user) {
+      const err = new Error("Email not found");
+      err.statusCode = 404;
+      throw err;
+    }
 
     const resetToken = tokens.signResetToken({ userId: user._id });
 
     await emailService.sendResetEmail(email, resetToken);
   },
 
+  // ================= RESET PASSWORD =================
   async resetPassword(token, newPassword) {
     const decoded = tokens.verify(token, "reset");
+
     const user = await User.findById(decoded.userId);
-    if (!user) throw new Error("User not found");
+    if (!user) {
+      const err = new Error("User not found");
+      err.statusCode = 404;
+      throw err;
+    }
 
     user.password = await bcrypt.hash(newPassword, 12);
     await user.save();
