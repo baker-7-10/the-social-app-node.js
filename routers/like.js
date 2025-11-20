@@ -6,9 +6,7 @@ const {
   getLikesCount,
 } = require("../controllers/likePost.controller");
 
-
-
-router.post("/like", likePost);
+router.post("/", likePost);
 
 router.delete("/unlike", unlikePost);
 

@@ -5,7 +5,7 @@ const { signupValidation, loginValidation } = require('../middlewares/authValida
 
 const router = express.Router();
 
-router.post('/signup', signupValidation , signup);
+router.post('/signup', signupValidation, signup);
 router.post('/login', loginValidation ,  login);
 router.get('/verify-email', verifyEmail);
 router.post('/forgot-password' ,forgotPassword);

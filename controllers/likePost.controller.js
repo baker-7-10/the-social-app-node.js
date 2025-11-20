@@ -1,4 +1,4 @@
-const Like = require("../models/like.model"); // موديول اللايك إذا كان في ملف منفصل
+const Like = require("../models/post.models"); // موديول اللايك إذا كان في ملف منفصل
 
 
 // ✅ عمل إعجاب على بوست

@@ -13,16 +13,12 @@ const {
   createPostValidation,
   updatePostValidation,
 } = require("../middlewares/postValidation");
-const verifyEmailToken = require("../middlewares/verifyEmailToken");
 
-router.post("/",verifyEmailToken, createPostValidation, createPost);
-
+router.post("/", createPostValidation, createPost);
+router.put("/:id", updatePostValidation, updatePost);
 router.get("/", viewPost);
-
 router.get("/:id", viewPostById);
-
 router.delete("/:id", deletePost);
 
-router.put("/:id", updatePostValidation, updatePost);
 
 module.exports = router;

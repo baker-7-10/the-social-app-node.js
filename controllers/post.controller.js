@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const Post = require("../models/post.models");
+const {Post} = require("../models/post.models");
 
 // ✅ إنشاء بوست جديد
 exports.createPost = async (req, res) => {
@@ -30,7 +30,7 @@ exports.viewPost = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("user", "name email")
-      .populate("comments.user", "name email");
+      // .populate("comments.user", "name email");
 
     res.status(200).json(posts);
   } catch (err) {
@@ -56,20 +56,28 @@ exports.viewPostById = async (req, res) => {
   }
 };
 
-// ✅ حذف بوست
+// ✅ حذف بوست بطريقة صحيحة
 exports.deletePost = async (req, res) => {
   try {
     const postId = req.params.id;
-    const deleted = await Post.findByIdAndDelete(postId);
-    if (!deleted) {
+    const post = await Post.findById(postId);
+
+    if (!post) {
       return res.status(404).json({ message: "❌ Post not found" });
-    } 
-    res.status(200).json({ message: "🗑️ Post deleted successfully" })
-    } catch (err) {
-      console.error("Error deleting post:", err)
-        res.status(500).json({ message: "❌ Server error while deleting post" });
     }
 
+    // تحقق إن المستخدم صاحب البوست
+    if (post.user.toString() !== req.user.userId) {
+      return res.status(403).json({ message: "❌ You are not allowed to delete this post" });
+    }
+
+    await post.remove(); // الآن نحذف بعد التحقق
+    res.status(200).json({ message: "🗑️ Post deleted successfully" });
+
+  } catch (err) {
+    console.error("Error deleting post:", err);
+    res.status(500).json({ message: "❌ Server error while deleting post" });
+  }
 };
 
 

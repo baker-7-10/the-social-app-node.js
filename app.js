@@ -3,10 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
+const verifyAccessToken = require("./middlewares/verifyAccessToken");
+
 
 
 const authRoutes = require('./routers/auth');
 const postRoutes = require('./routers/post');
+const likeRoutes = require('./routers/like');
 
 const app = express();
 
@@ -24,6 +27,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
+app.use("/like", likeRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err); 
