@@ -1,51 +1,39 @@
-const Like = require("../models/post.models"); // موديول اللايك إذا كان في ملف منفصل
+const {Like} = require("../models/post.models");
+const { Post } = require("../models/post.models");
 
-
-// ✅ عمل إعجاب على بوست
-exports.likePost = async (req, res) => {
+// ✅ إضافة أو إزالة Like
+exports.toggleLike = async (req, res) => {
   try {
-    const { userId, postId } = req.body;
+    const userId = req.user.userId;
+    const postId = req.params.postId;
 
-    // تحقق إذا المستخدم عمل لايك قبل كذا
-    const existing = await Like.findOne({ user: userId, post: postId });
-    if (existing)
-      return res.status(400).json({ message: "❌ You already liked this post" });
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: "❌ Post not found" });
 
-    const like = new Like({ user: userId, post: postId });
-    await like.save();
-    res.status(201).json({ message: "❤️ Post liked successfully", like });
+    const existingLike = await Like.findOne({ user: userId, post: postId });
+
+    if (existingLike) {
+      await existingLike.remove();
+      return res.json({ message: "👍 Like removed" });
+    } else {
+      const like = new Like({ user: userId, post: postId });
+      await like.save();
+      return res.json({ message: "❤️ Like added" });
+    }
   } catch (err) {
-    console.error("Error liking post:", err);
-    res.status(500).json({ message: "❌ Server error while liking post" });
+    console.error(err);
+    res.status(500).json({ message: "❌ Server error while toggling like" + err });
   }
 };
 
-// ✅ إلغاء الإعجاب
-exports.unlikePost = async (req, res) => {
-  try {
-    const { userId, postId } = req.body;
-
-    const removed = await Like.findOneAndDelete({ user: userId, post: postId });
-    if (!removed)
-      return res.status(404).json({ message: "❌ Like not found for this post" });
-
-    res.status(200).json({ message: "💔 Like removed successfully" });
-  } catch (err) {
-    console.error("Error unliking post:", err);
-    res.status(500).json({ message: "❌ Server error while unliking post" });
-  }
-};
-
-// ✅ عدد الإعجابات
+// ✅ جلب عدد الـ Likes
 exports.getLikesCount = async (req, res) => {
   try {
-    const postId = req.params.id;
+    const postId = req.params.postId;
     const count = await Like.countDocuments({ post: postId });
-    res.status(200).json({ likesCount: count });
+    res.json({ postId, likes: count });
   } catch (err) {
-    console.error("Error getting likes count:", err);
-    res.status(500).json({ message: "❌ Server error while counting likes" });
+    console.error(err);
+    res.status(500).json({ message: "❌ Server error while fetching likes count" });
   }
 };
-
-

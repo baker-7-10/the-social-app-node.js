@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
-app.use("/like", likeRoutes);
+app.use("/like",verifyAccessToken , likeRoutes);
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err); 

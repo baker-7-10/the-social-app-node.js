@@ -1,15 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const {
-  likePost,
-  unlikePost,
+  toggleLike,
   getLikesCount,
 } = require("../controllers/likePost.controller");
 
-router.post("/", likePost);
+router.post("/:postId/toggle" , toggleLike); 
 
-router.delete("/unlike", unlikePost);
-
-router.get("/:id/likes", getLikesCount);
+router.get("/:postId/count", getLikesCount);
 
 module.exports = router;
