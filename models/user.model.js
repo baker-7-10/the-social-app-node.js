@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema(
   {
-    // ======================
-    // الأساسيات
-    // ======================
+
     name: {
       type: String,
       required: true,
@@ -27,9 +25,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
 
-    // ======================
-    // بيانات إضافية اختيارية
-    // ======================
+  
     bio: {
       type: String,
       default: "I'm new here 👋",
