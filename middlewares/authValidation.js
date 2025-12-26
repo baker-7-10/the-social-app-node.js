@@ -1,7 +1,7 @@
 const { body } = require('express-validator');
 const User = require('../models/user.model');
 
-// Signup Validation
+ 
 exports.signupValidation = [
   body('email')
     .isEmail()
@@ -27,7 +27,7 @@ exports.signupValidation = [
 ];
 
 
-// Login Validation
+ 
 exports.loginValidation = [
   body('email')
     .isEmail()

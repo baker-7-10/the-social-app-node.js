@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const {Post} = require("../models/post.models");
 
-// ✅ إنشاء بوست جديد
+ 
 exports.createPost = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
@@ -25,12 +25,12 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// ✅ عرض جميع البوستات
+ 
 exports.viewPost = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("user", "name email")
-      // .populate("comments.user", "name email");
+       
 
     res.status(200).json(posts);
   } catch (err) {
@@ -56,7 +56,7 @@ exports.viewPostById = async (req, res) => {
   }
 };
 
-// ✅ حذف بوست بطريقة صحيحة
+ 
 exports.deletePost = async (req, res) => {
   try {
     const postId = req.params.id;
@@ -66,12 +66,12 @@ exports.deletePost = async (req, res) => {
       return res.status(404).json({ message: "❌ Post not found" });
     }
 
-    // تحقق إن المستخدم صاحب البوست
+     
     if (post.user.toString() !== req.user.userId) {
       return res.status(403).json({ message: "❌ You are not allowed to delete this post" });
     }
 
-    await post.remove(); // الآن نحذف بعد التحقق
+    await post.remove();  
     res.status(200).json({ message: "🗑️ Post deleted successfully" });
 
   } catch (err) {
@@ -81,7 +81,7 @@ exports.deletePost = async (req, res) => {
 };
 
 
-// ✅ تحديث بوست
+ 
 exports.updatePost = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())

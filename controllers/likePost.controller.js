@@ -1,7 +1,7 @@
 const {Like} = require("../models/post.models");
 const { Post } = require("../models/post.models");
 
-// ✅ إضافة أو إزالة Like
+ 
 exports.toggleLike = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -26,7 +26,7 @@ exports.toggleLike = async (req, res) => {
   }
 };
 
-// ✅ جلب عدد الـ Likes
+ 
 exports.getLikesCount = async (req, res) => {
   try {
     const postId = req.params.postId;

@@ -5,10 +5,10 @@ const emailService = require("./email.service");
 FRONTEND_URL = process.env.FRONTEND_URL;
 
 module.exports = {
-  // ================= SIGNUP =================
+   
   async signup({ name, email, password }) {
 
-    // Check duplicate email BEFORE create
+     
     const exists = await User.findOne({ email });
     if (exists) {
       const err = new Error("Email already exists");
@@ -32,7 +32,7 @@ module.exports = {
     return user;
   },
 
-  // ================= LOGIN =================
+   
   async login({ email, password }) {
     const user = await User.findOne({ email });
 
@@ -61,7 +61,7 @@ module.exports = {
     return { user, accessToken, refreshToken };
   },
 
-  // ================= VERIFY EMAIL =================
+   
   async verifyEmail(token) {
   const decoded = tokens.verify(token, "verify");
   const user = await User.findById(decoded.userId);
@@ -72,11 +72,11 @@ module.exports = {
     throw err;
   }
 
-  const EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 ساعة
+  const EXPIRATION_MS = 24 * 60 * 60 * 1000;  
   if (!user.isVerified && (new Date() - user.createdAt) > EXPIRATION_MS) {
     await User.findByIdAndDelete(user._id);
     const err = new Error("Verification expired. Account deleted.");
-    err.statusCode = 410; // Gone
+    err.statusCode = 410;  
     throw err;
   }
 
@@ -91,7 +91,7 @@ module.exports = {
 },
 
 
-  // ================= FORGOT PASSWORD =================
+   
   async forgotPassword(email) {
     const user = await User.findOne({ email });
 
@@ -106,7 +106,7 @@ module.exports = {
     await emailService.sendResetEmail(email, resetToken);
   },
 
-  // ================= RESET PASSWORD =================
+   
   async resetPassword(token, newPassword) {
     const decoded = tokens.verify(token, "reset");
 

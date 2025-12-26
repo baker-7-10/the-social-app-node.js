@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-// ======================
-// Comment Schema
-// ======================
+ 
+ 
+ 
 const CommentSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -12,9 +12,9 @@ const CommentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ======================
-// Like Schema
-// ======================
+ 
+ 
+ 
 const LikeSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -23,9 +23,9 @@ const LikeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ======================
-// Post Schema
-// ======================
+ 
+ 
+ 
 const PostSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -38,14 +38,14 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ======================
-// Model Registration
-// ======================
+ 
+ 
+ 
 const Post = mongoose.model("Post", PostSchema);
 const Comment = mongoose.model("Comment", CommentSchema);
 const Like = mongoose.model("Like", LikeSchema);
 
-// ======================
-// Export all models
-// ======================
+ 
+ 
+ 
 module.exports = { Post, Comment, Like };

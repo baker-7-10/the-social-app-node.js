@@ -13,7 +13,7 @@ const likeRoutes = require('./routers/like');
 
 const app = express();
 
-// Middleware
+ 
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
@@ -24,11 +24,11 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Routes
+ 
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
 app.use("/like",verifyAccessToken , likeRoutes);
-// Global Error Handler
+ 
 app.use((err, req, res, next) => {
   console.error(err); 
 

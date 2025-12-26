@@ -1,5 +1,5 @@
-// middlewares/verifyAccessToken.js
-const tokens = require("../config/tokens"); // الملف اللي فيه JWT verify
+ 
+const tokens = require("../config/tokens");  
 
 module.exports = (req, res, next) => {
   try {
@@ -11,13 +11,13 @@ module.exports = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    // يفك التوكن ويتأكد أنه صالح
+     
     const decoded = tokens.verify(token, "access");
 
-    // نخزن بيانات المستخدم في req
+     
     req.user = decoded;
 
-    next(); // إذا التوكن صحيح، يسمح للروت بالعمل
+    next();  
   } catch (err) {
     console.error("Access token error:", err.message);
     return res.status(401).json({ message: "Invalid or expired access token" });

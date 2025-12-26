@@ -4,12 +4,12 @@ require('dotenv').config();
 
 const PORT = process.env.PORT || 8000;
 
-// DB Connect
+ 
 connectDB();
 
-// Start Server
+ 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running: http://localhost:${PORT}`);
+  console.log(`🚀 Server running: http: 
 });
 
 
